@@ -1,11 +1,20 @@
+# [submodule "blt"]
+# 	path = blt
+# 	url = https://github.com/LLNL/blt.git
+# [submodule "tpl/raja"]
+# 	path = tpl/raja
+# 	url = https://github.com/LLNL/RAJA.git
+# 	branch = develop
+# [submodule "tpl/chai"]
+# 	path = tpl/chai
+# 	url = https://github.com/LLNL/CHAI.git
+# 	branch = develop
 [submodule "blt"]
 	path = blt
-	url = https://github.com/LLNL/blt.git
+	url = https://github.com/noelchalmers/blt.git
 [submodule "tpl/raja"]
 	path = tpl/raja
-	url = https://github.com/LLNL/RAJA.git
-	branch = develop
+	url = https://github.com/noelchalmers/RAJA.git
 [submodule "tpl/chai"]
 	path = tpl/chai
-	url = https://github.com/LLNL/CHAI.git
-	branch = develop
+	url = https://github.com/noelchalmers/CHAI.git
