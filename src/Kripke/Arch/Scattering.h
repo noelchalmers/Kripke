@@ -340,10 +340,10 @@ template<>
 struct Policy_Scattering<ArchLayoutT<ArchT_CUDA, LayoutT_ZGD>> {
     using ExecPolicy =
       KernelPolicy<
-        CudaKernel<
-          For<0, cuda_block_exec, // moment
-            For<1, cuda_block_exec, // DstGrp
-              For<3, cuda_thread_exec, // zone
+        HipKernel<
+          For<0, hip_block_exec, // moment
+            For<1, hip_block_exec, // DstGrp
+              For<3, hip_thread_exec, // zone
                 Thread<
                   For<2, seq_exec, // SrcGrp
                     Lambda<0>
@@ -357,6 +357,131 @@ struct Policy_Scattering<ArchLayoutT<ArchT_CUDA, LayoutT_ZGD>> {
 };
 #endif //KRIPKE_USE_CUDA
 
+#ifdef KRIPKE_USE_HIP
+template<>
+struct Policy_Scattering<ArchLayoutT<ArchT_HIP, LayoutT_DGZ>> {
+  using ExecPolicy =
+    KernelPolicy<
+      HipKernel<
+        For<0, hip_block_exec, // moment
+          For<1, hip_block_exec, // DstGrp
+            For<3, hip_thread_exec, // zone
+              Thread<
+                For<2, seq_exec, // SrcGrp
+                  Lambda<0>
+                >
+              >
+            >
+          >
+        >
+      >
+    >;
+};
+
+template<>
+struct Policy_Scattering<ArchLayoutT<ArchT_HIP, LayoutT_DZG>> {
+    using ExecPolicy =
+      KernelPolicy<
+        HipKernel<
+          For<0, hip_block_exec, // moment
+            For<1, hip_block_exec, // DstGrp
+              For<3, hip_thread_exec, // zone
+                Thread<
+                  For<2, seq_exec, // SrcGrp
+                    Lambda<0>
+                  >
+                >
+              >
+            >
+          >
+        >
+      >;
+};
+
+
+template<>
+struct Policy_Scattering<ArchLayoutT<ArchT_HIP, LayoutT_GDZ>> {
+    using ExecPolicy =
+      KernelPolicy<
+        HipKernel<
+          For<0, hip_block_exec, // moment
+            For<1, hip_block_exec, // DstGrp
+              For<3, hip_thread_exec, // zone
+                Thread<
+                  For<2, seq_exec, // SrcGrp
+                    Lambda<0>
+                  >
+                >
+              >
+            >
+          >
+        >
+      >;
+};
+
+
+template<>
+struct Policy_Scattering<ArchLayoutT<ArchT_HIP, LayoutT_GZD>> {
+    using ExecPolicy =
+      KernelPolicy<
+        HipKernel<
+          For<0, hip_block_exec, // moment
+            For<1, hip_block_exec, // DstGrp
+              For<3, hip_thread_exec, // zone
+                Thread<
+                  For<2, seq_exec, // SrcGrp
+                    Lambda<0>
+                  >
+                >
+              >
+            >
+          >
+        >
+      >;
+};
+
+
+template<>
+struct Policy_Scattering<ArchLayoutT<ArchT_HIP, LayoutT_ZDG>> {
+    using ExecPolicy =
+      KernelPolicy<
+        HipKernel<
+          For<0, hip_block_exec, // moment
+            For<1, hip_block_exec, // DstGrp
+              For<3, hip_thread_exec, // zone
+                Thread<
+                  For<2, seq_exec, // SrcGrp
+                    Lambda<0>
+                  >
+                >
+              >
+            >
+          >
+        >
+      >;
+};
+
+
+template<>
+struct Policy_Scattering<ArchLayoutT<ArchT_HIP, LayoutT_ZGD>> {
+    using ExecPolicy =
+      KernelPolicy<
+        HipKernel<
+          For<0, hip_block_exec, // moment
+            For<1, hip_block_exec, // DstGrp
+              For<3, hip_thread_exec, // zone
+                Thread<
+                  For<2, seq_exec, // SrcGrp
+                    Lambda<0>
+                  >
+                >
+              >
+            >
+          >
+        >
+      >;
+};
+#endif //KRIPKE_USE_HIP
 
 }
 }

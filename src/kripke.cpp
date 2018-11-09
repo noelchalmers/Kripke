@@ -247,6 +247,14 @@ int main(int argc, char **argv) {
     printf("  CUDA Enabled:           No\n");
 #endif
 
+#ifdef KRIPKE_USE_HIP
+    printf("  HIP Enabled:           Yes\n");
+    printf("    HIPCC:                 %s\n", KRIPKE_HIPCC_COMPILER);
+    printf("    HIPCC Flags:           \"%s\"\n", KRIPKE_HIPCC_FLAGS);
+#else
+    printf("  HIP Enabled:           No\n");
+#endif
+
 #ifdef KRIPKE_USE_MPI
     printf("  MPI Enabled:            Yes\n");
 #else

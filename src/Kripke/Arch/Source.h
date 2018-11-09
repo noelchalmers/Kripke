@@ -135,6 +135,36 @@ struct Policy_Source<ArchLayoutT<ArchT_CUDA, LayoutT_DZG>> {
 #endif // KRIPKE_USE_CUDA
 
 
+#ifdef KRIPKE_USE_HIP
+template<>
+struct Policy_Source<ArchLayoutT<ArchT_HIP, LayoutT_DGZ>> {
+  using ExecPolicy =
+    KernelPolicy<
+      HipKernel<
+        For<0, hip_thread_exec,  // Group
+          For<1, hip_threadblock_exec<32>, // MixElem
+            Lambda<0>
+          >
+        >
+      >
+    >;
+};
+
+template<>
+struct Policy_Source<ArchLayoutT<ArchT_HIP, LayoutT_DZG>> {
+  using ExecPolicy =
+    KernelPolicy<
+      HipKernel<
+        For<1, hip_threadblock_exec<32>, // MixElem
+          For<0, hip_thread_exec,  // Group
+            Lambda<0>
+          >
+        >
+      >
+    >;
+};
+#endif // KRIPKE_USE_HIP
+
 }
 }
 

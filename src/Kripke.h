@@ -153,6 +153,20 @@ namespace Arch {
   using RAJA::statement::Thread;
 #endif
 
+#ifdef KRIPKE_USE_HIP
+  using RAJA::hip_exec;
+  using RAJA::hip_block_exec;
+  using RAJA::hip_seq_syncthreads_exec;
+  using RAJA::hip_thread_exec;
+  using RAJA::hip_threadblock_exec;
+  using RAJA::hip_reduce;
+  using RAJA::atomic::hip_atomic;
+  using RAJA::statement::HipKernel;
+  using RAJA::statement::HipKernelAsync;
+  using RAJA::statement::HipSyncThreads;
+  using RAJA::statement::Thread;
+#endif
+
 } // namespace Arch
 } // namespace Kripke
 

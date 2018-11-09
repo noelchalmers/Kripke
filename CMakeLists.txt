@@ -53,12 +53,10 @@ if(ENABLE_CUDA)
 
 endif()
 
-
-
 #
 # Configure CHAI/Umpire for memory management
 # 
-option(ENABLE_CHAI "Enable CHAI/Umpire memory management" Off)
+option(ENABLE_CHAI "Enable CHAI/Umpire memory management" On)
 if(ENABLE_CHAI)
 
   # Add CHAI (which brings in Umpire as a submodule)
@@ -125,7 +123,32 @@ if(ENABLE_CUDA)
 endif()
 
 
+#
+# Configure HIP
+#
 
+if(ENABLE_HIP)
+
+  set(KRIPKE_USE_HIP 1)
+    
+  list(APPEND KRIPKE_DEPENDS hip)
+  
+  set(KRIPKE_ARCH "HIP")
+
+  list(APPEND HIP_HIPCC_FLAGS "-std=c++14")
+
+  # Make sure that nvcc turns on the host compiler OpenMP flag  
+  if(ENABLE_OPENMP)
+    list(APPEND HIP_HIPCC_FLAGS ${OpenMP_CXX_FLAGS})
+  endif()
+  
+  
+  # Pass on compiler info to KripkeConfig.h
+  string(TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_UPPER)
+  set(KRIPKE_HIPCC_COMPILER "${CMAKE_HIP_COMPILER} ")
+  set(KRIPKE_HIPCC_FLAGS    "${CMAKE_HIP_FLAGS} ${CMAKE_HIP_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}")
+
+endif()
 
 
 

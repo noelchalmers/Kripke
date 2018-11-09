@@ -107,6 +107,9 @@ namespace Core {
 #ifdef KRIPKE_USE_CUDA
                 case chai::GPU: printf("GPU  "); break;
 #endif
+#ifdef KRIPKE_USE_HIP
+                case chai::GPU: printf("GPU  "); break;
+#endif
                 default: printf("UNK ");
                 }
 

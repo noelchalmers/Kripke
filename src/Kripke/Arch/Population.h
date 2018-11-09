@@ -236,7 +236,7 @@ struct Policy_Population<ArchLayoutT<ArchT_OpenMP, LayoutT_ZGD>>{
 #ifdef KRIPKE_USE_CUDA
 template<>
 struct Policy_Population<ArchLayoutT<ArchT_CUDA, LayoutT_DGZ>>{
-  using ReducePolicy = cuda_reduce<1024>;
+  using ReducePolicy = cuda_reduce;
 
   using ExecPolicy =
     KernelPolicy<
@@ -254,7 +254,7 @@ struct Policy_Population<ArchLayoutT<ArchT_CUDA, LayoutT_DGZ>>{
 
 template<>
 struct Policy_Population<ArchLayoutT<ArchT_CUDA, LayoutT_DZG>>{
-  using ReducePolicy = cuda_reduce<1024>;
+  using ReducePolicy = cuda_reduce;
 
   using ExecPolicy =
     KernelPolicy<
@@ -273,7 +273,7 @@ struct Policy_Population<ArchLayoutT<ArchT_CUDA, LayoutT_DZG>>{
 
 template<>
 struct Policy_Population<ArchLayoutT<ArchT_CUDA, LayoutT_GDZ>>{
-  using ReducePolicy = cuda_reduce<1024>;
+  using ReducePolicy = cuda_reduce;
 
   using ExecPolicy =
     KernelPolicy<
@@ -293,7 +293,7 @@ struct Policy_Population<ArchLayoutT<ArchT_CUDA, LayoutT_GDZ>>{
 
 template<>
 struct Policy_Population<ArchLayoutT<ArchT_CUDA, LayoutT_GZD>>{
-  using ReducePolicy = cuda_reduce<1024>;
+  using ReducePolicy = cuda_reduce;
 
   using ExecPolicy =
     KernelPolicy<
@@ -312,7 +312,7 @@ struct Policy_Population<ArchLayoutT<ArchT_CUDA, LayoutT_GZD>>{
 
 template<>
 struct Policy_Population<ArchLayoutT<ArchT_CUDA, LayoutT_ZDG>>{
-  using ReducePolicy = cuda_reduce<1024>;
+  using ReducePolicy = cuda_reduce;
 
   using ExecPolicy =
     KernelPolicy<
@@ -330,7 +330,7 @@ struct Policy_Population<ArchLayoutT<ArchT_CUDA, LayoutT_ZDG>>{
 
 template<>
 struct Policy_Population<ArchLayoutT<ArchT_CUDA, LayoutT_ZGD>>{
-  using ReducePolicy = cuda_reduce<1024>;
+  using ReducePolicy = cuda_reduce;
 
   using ExecPolicy =
     KernelPolicy<
@@ -348,7 +348,120 @@ struct Policy_Population<ArchLayoutT<ArchT_CUDA, LayoutT_ZGD>>{
 };
 #endif // KRIPKE_USE_CUDA
 
+#ifdef KRIPKE_USE_HIP
+template<>
+struct Policy_Population<ArchLayoutT<ArchT_HIP, LayoutT_DGZ>>{
+  using ReducePolicy = hip_reduce;
 
+  using ExecPolicy =
+    KernelPolicy<
+      HipKernel<
+        For<0, hip_thread_exec, // direction
+          For<1, hip_thread_exec, // group
+            For<2, hip_threadblock_exec<32>, // zone
+              Lambda<0>
+            >
+          >
+        >
+      >
+    >;
+};
+
+template<>
+struct Policy_Population<ArchLayoutT<ArchT_HIP, LayoutT_DZG>>{
+  using ReducePolicy = hip_reduce;
+
+  using ExecPolicy =
+    KernelPolicy<
+      HipKernel<
+        For<0, hip_thread_exec, // direction
+          For<2, hip_threadblock_exec<32>, // zone
+            For<1, hip_thread_exec, // group
+              Lambda<0>
+            >
+          >
+        >
+      >
+    >;
+
+};
+
+template<>
+struct Policy_Population<ArchLayoutT<ArchT_HIP, LayoutT_GDZ>>{
+  using ReducePolicy = hip_reduce;
+
+  using ExecPolicy =
+    KernelPolicy<
+      HipKernel<
+        For<1, hip_thread_exec, // group
+          For<0, hip_thread_exec, // direction
+            For<2, hip_threadblock_exec<32>, // zone
+              Lambda<0>
+            >
+          >
+        >
+      >
+    >;
+
+};
+
+
+template<>
+struct Policy_Population<ArchLayoutT<ArchT_HIP, LayoutT_GZD>>{
+  using ReducePolicy = hip_reduce;
+
+  using ExecPolicy =
+    KernelPolicy<
+      HipKernel<
+        For<1, hip_thread_exec, // group
+          For<2, hip_threadblock_exec<32>, // zone
+            For<0, hip_thread_exec, // direction
+              Lambda<0>
+            >
+          >
+        >
+      >
+    >;
+
+};
+
+template<>
+struct Policy_Population<ArchLayoutT<ArchT_HIP, LayoutT_ZDG>>{
+  using ReducePolicy = hip_reduce;
+
+  using ExecPolicy =
+    KernelPolicy<
+      HipKernel<
+        For<2, hip_threadblock_exec<32>, // zone
+          For<0, hip_thread_exec, // direction
+            For<1, hip_thread_exec, // group
+              Lambda<0>
+            >
+          >
+        >
+      >
+    >;
+};
+
+template<>
+struct Policy_Population<ArchLayoutT<ArchT_HIP, LayoutT_ZGD>>{
+  using ReducePolicy = hip_reduce;
+
+  using ExecPolicy =
+    KernelPolicy<
+      HipKernel<
+        For<2, hip_threadblock_exec<32>, // zone
+          For<1, hip_thread_exec, // group
+            For<0, hip_thread_exec, // direction
+              Lambda<0>
+            >
+          >
+        >
+      >
+    >;
+
+};
+#endif // KRIPKE_USE_HIP
 
 }
 }
