@@ -51,7 +51,7 @@ struct Grid_Data;
   if(!(EXPR)){\
     KRIPKE_ABORT("Assertion Failed: " __VA_ARGS__); \
   }
-   
+
 
 #define KRIPKE_LAMBDA [=] RAJA_HOST_DEVICE
 
@@ -94,8 +94,8 @@ namespace Arch {
   using RAJA::seq_exec;
   using RAJA::simd_exec;
   using RAJA::seq_reduce;
-  using RAJA::atomic::auto_atomic;
-  using RAJA::atomic::seq_atomic;
+  using RAJA::auto_atomic;
+  using RAJA::seq_atomic;
   using RAJA::ArgList;
   using RAJA::KernelPolicy;
   using RAJA::statement::Collapse;
@@ -126,7 +126,7 @@ namespace Arch {
   using RAJA::cuda_thread_y_direct;
   using RAJA::cuda_thread_z_direct;
   using RAJA::cuda_reduce;
-  using RAJA::atomic::cuda_atomic;
+  using RAJA::cuda_atomic;
   using RAJA::statement::CudaKernel;
   using RAJA::statement::CudaKernelAsync;
   using RAJA::statement::CudaSyncThreads;
@@ -144,7 +144,7 @@ namespace Arch {
   using RAJA::hip_thread_y_direct;
   using RAJA::hip_thread_z_direct;
   using RAJA::hip_reduce;
-  using RAJA::atomic::hip_atomic;
+  using RAJA::hip_atomic;
   using RAJA::statement::HipKernel;
   using RAJA::statement::HipKernelAsync;
   using RAJA::statement::HipSyncThreads;

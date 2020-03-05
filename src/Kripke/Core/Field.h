@@ -15,11 +15,9 @@
 #include <Kripke/Core/Set.h>
 #include <vector>
 
-#ifdef KRIPKE_USE_CHAI
 #define DEBUG
 #include <chai/ManagedArray.hpp>
 #undef DEBUG
-#endif
 
 namespace Kripke {
 namespace Core {
@@ -30,12 +28,7 @@ namespace Core {
   class FieldStorage : public Kripke::Core::DomainVar {
     public:
       using ElementType = ELEMENT;
-
-#ifndef KRIPKE_USE_CHAI
-      using ElementPtr = ELEMENT*;
-#else
       using ElementPtr = chai::ManagedArray<ELEMENT>;
-#endif
 
       using Layout1dType = RAJA::TypedLayout<RAJA::Index_type, camp::tuple<RAJA::Index_type>>;
       using View1dType = RAJA::View<ElementType, Layout1dType, ElementPtr>;
@@ -51,11 +44,7 @@ namespace Core {
         // allocate all of our chunks, and create layouts for each one
         size_t num_chunks = m_chunk_to_subdomain.size();
         m_chunk_to_size.resize(num_chunks, 0);
-#ifndef KRIPKE_USE_CHAI
-        m_chunk_to_data.resize(num_chunks, nullptr);
-#else
         m_chunk_to_data.resize(num_chunks);
-#endif
 
         for(size_t chunk_id = 0;chunk_id < num_chunks;++ chunk_id){
 
@@ -64,9 +53,7 @@ namespace Core {
           size_t sdom_size = spanned_set.size(sdom_id);
 
           m_chunk_to_size[chunk_id] = sdom_size;
-#ifndef KRIPKE_USE_CHAI
-          m_chunk_to_data[chunk_id] = new ElementType[sdom_size];
-#else
+
           m_chunk_to_data[chunk_id].allocate(sdom_size, chai::CPU,
               [=](chai::Action action, chai::ExecutionSpace space, size_t bytes){
                 /*printf("CHAI[%s, %d]: ", BaseVar::getName().c_str(), (int)chunk_id);
@@ -90,17 +77,10 @@ namespace Core {
               }
 
           );
-#endif
         }
       }
 
-      virtual ~FieldStorage(){
-#ifndef KRIPKE_USE_CHAI
-        for(auto i : m_chunk_to_data){
-          delete[] i;
-        }
-#endif
-      }
+      virtual ~FieldStorage(){}
 
       // Dissallow copy construction
       FieldStorage(FieldStorage<ElementType> const &) = delete;
@@ -134,16 +114,11 @@ namespace Core {
             (int)(int)m_subdomain_to_chunk.size());
         size_t chunk_id = m_subdomain_to_chunk[*sdom_id];
 
-#ifndef KRIPKE_USE_CHAI
-        return  m_chunk_to_data[chunk_id];
-#else
         // use pointer conversion to get host pointer
         ElementType *ptr = m_chunk_to_data[chunk_id];
 
         // return host pointer
         return(ptr);
-
-#endif
       }
 
 
@@ -168,11 +143,7 @@ namespace Core {
       using Parent = Kripke::Core::FieldStorage<ELEMENT>;
 
       using ElementType = ELEMENT;
-#ifndef KRIPKE_USE_CHAI
-      using ElementPtr = ELEMENT*;
-#else
       using ElementPtr = chai::ManagedArray<ELEMENT>;
-#endif
 
       static constexpr size_t NumDims = sizeof...(IDX_TYPES);
 
@@ -255,12 +226,6 @@ namespace Core {
         printf("  m_chunk_to_size: ");
         for(auto x : Parent::m_chunk_to_size){printf("%lu ", (unsigned long)x);}
         printf("\n");
-
-#ifndef KRIPKE_USE_CHAI
-        printf("  m_chunk_to_data: ");
-        for(auto x : Parent::m_chunk_to_data){printf("%p ", x);}
-        printf("\n");
-#endif
 
         for(size_t chunk_id = 0;chunk_id < Parent::m_chunk_to_data.size();++ chunk_id){
 

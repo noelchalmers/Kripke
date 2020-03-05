@@ -1,7 +1,7 @@
 #
 # Copyright (c) 2014-19, Lawrence Livermore National Security, LLC
 # and Kripke project contributors. See the COPYRIGHT file for details.
-# 
+#
 # SPDX-License-Identifier: (BSD-3-Clause)
 #
 
@@ -48,61 +48,45 @@ set(KRIPKE_LAYOUT DGZ)
 # Add CMake CUDA language support
 #
 if(ENABLE_CUDA)
-  # Native CMake support  
+  # Native CMake support
   enable_language(CUDA)
-  
+
   # Make sure we use nvcc with our selected host compiler to link executables
   set(CMAKE_CUDA_LINK_EXECUTABLE "${CMAKE_CUDA_COMPILER} -ccbin <CMAKE_CXX_COMPILER> <CMAKE_CUDA_LINK_FLAGS>  <FLAGS>  <LINK_FLAGS>  <OBJECTS> -o <TARGET>  <LINK_LIBRARIES>")
   # Use nvcc as the linker
   set(CMAKE_LINKER "${CMAKE_CUDA_COMPILER}" CACHE STRING "")
-  
-  # Pass nvcc the -cubin to point at our C++ compiler  
+
+  # Pass nvcc the -cubin to point at our C++ compiler
   set(CUDA_HOST_COMPILER ${CMAKE_CXX_COMPILER})
 
 endif()
 
-
-
 #
 # Configure CHAI/Umpire for memory management
-# 
-option(ENABLE_CHAI "Enable CHAI/Umpire memory management" Off)
-if(ENABLE_CHAI)
-
-  # Add CHAI (which brings in Umpire as a submodule)
-  add_subdirectory(tpl/chai)
-  
-  set(ENABLE_TESTS Off CACHE Bool "")
-  
-  set(KRIPKE_USE_CHAI 1)
-  
-  list(APPEND KRIPKE_DEPENDS chai)
-  
-endif()
-
-
-#
-# Configure RAJA (REQUIRED)
 #
 
-set(RAJA_ENABLE_TESTS Off CACHE Bool "")
-add_subdirectory(tpl/raja)
+# CHAI now contains RAJA, so we require CHAI
+# Add CHAI (which brings in Umpire as a submodule)
+set(ENABLE_RAJA_PLUGIN On CACHE BOOL "")
+set(ENABLE_TESTS Off CACHE Bool "")
 
+add_subdirectory(tpl/chai)
+
+list(APPEND KRIPKE_DEPENDS chai)
 list(APPEND KRIPKE_DEPENDS RAJA)
-
 
 #
 # Configure OpenMP (CPU threading, not target offload)
 #
 
 if(ENABLE_OPENMP)
-  
-  set(KRIPKE_USE_OPENMP 1)  
-  
+
+  set(KRIPKE_USE_OPENMP 1)
+
   list(APPEND KRIPKE_DEPENDS openmp)
 
   set(KRIPKE_ARCH "OpenMP")
-  
+
 endif()
 
 
@@ -114,17 +98,17 @@ endif()
 if(ENABLE_CUDA)
 
   set(KRIPKE_USE_CUDA 1)
-    
+
   list(APPEND KRIPKE_DEPENDS cuda)
-  
+
   set(KRIPKE_ARCH "CUDA")
 
-  # Make sure that nvcc turns on the host compiler OpenMP flag	
+  # Make sure that nvcc turns on the host compiler OpenMP flag
   if(ENABLE_OPENMP)
     list(APPEND CUDA_NVCC_FLAGS -Xcompiler ${OpenMP_CXX_FLAGS})
   endif()
-	
-	
+
+
   # Pass on compiler info to KripkeConfig.h
   string(TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_UPPER)
   set(KRIPKE_NVCC_COMPILER "${CMAKE_CUDA_COMPILER}")
@@ -139,19 +123,19 @@ endif()
 if(ENABLE_HIP)
 
   set(KRIPKE_USE_HIP 1)
-    
+
   list(APPEND KRIPKE_DEPENDS hip)
-  
+
   set(KRIPKE_ARCH "HIP")
 
   list(APPEND HIP_HIPCC_FLAGS "-std=c++14 -Wno-inconsistent-missing-override -Wno-invalid-noreturn")
 
-  # Make sure that hipcc turns on the OpenMP flag  
+  # Make sure that hipcc turns on the OpenMP flag
   if(ENABLE_OPENMP)
     list(APPEND HIP_HIPCC_FLAGS ${OpenMP_CXX_FLAGS})
   endif()
-  
-  
+
+
   # Pass on compiler info to KripkeConfig.h
   string(TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_UPPER)
   set(KRIPKE_HIPCC_COMPILER "hipcc")
@@ -167,13 +151,13 @@ if (ENABLE_CALIPER)
   find_package(caliper REQUIRED)
 
   set(KRIPKE_USE_CALIPER TRUE)
-  
+
   blt_register_library(NAME caliper
     INCLUDES ${caliper_INCLUDE_DIR}
     LIBRARIES caliper)
-  
+
   list(APPEND KRIPKE_DEPENDS caliper)
-  
+
   if (ENABLE_MPI)
     list(APPEND KRIPKE_DEPENDS caliper-mpi)
   endif()
@@ -184,15 +168,15 @@ message(STATUS "Caliper support is ${KRIPKE_USE_CALIPER}")
 
 #
 # Configure MPI
-# 
+#
 # Use ENABLE_MPI=On if you want CMake to automatically figure out MPI
 # using FindMPI
 #
-# Use ENABLE_MPI_WRAPPER if you want to use mpi compiler wrappers for CC/CXX 
-# 
+# Use ENABLE_MPI_WRAPPER if you want to use mpi compiler wrappers for CC/CXX
+#
 
 if(ENABLE_MPI)
-	set(KRIPKE_USE_MPI 1)	
+	set(KRIPKE_USE_MPI 1)
 	list(APPEND KRIPKE_DEPENDS mpi)
 endif()
 
@@ -251,7 +235,7 @@ configure_file(${PROJECT_SOURCE_DIR}/src/KripkeConfig.h.in
 #
 # Define build targets for Kripke
 #
- 
+
 
 
 blt_add_library(
@@ -284,14 +268,14 @@ blt_add_library(
 )
 
 
-target_include_directories(kripke PUBLIC 
+target_include_directories(kripke PUBLIC
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
 	$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>)
 
-blt_add_executable( 
+blt_add_executable(
   NAME        kripke.exe
   SOURCES     "src/kripke.cpp"
-  DEPENDS_ON  ${KRIPKE_DEPENDS} kripke 
+  DEPENDS_ON  ${KRIPKE_DEPENDS} kripke
 )
 
 
