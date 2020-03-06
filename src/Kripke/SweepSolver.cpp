@@ -24,10 +24,12 @@ void Kripke::SweepSolver (Kripke::Core::DataStore &data_store, std::vector<SdomI
 {
   KRIPKE_TIMER(data_store, SweepSolver);
 
+  ArchV arch_v = data_store.getVariable<ArchLayout>("al").al_v.arch_v;
+
   // Initialize plane data
-  Kripke::Kernel::kConst(data_store.getVariable<Field_IPlane>("i_plane"), 0.0);
-  Kripke::Kernel::kConst(data_store.getVariable<Field_JPlane>("j_plane"), 0.0);
-  Kripke::Kernel::kConst(data_store.getVariable<Field_KPlane>("k_plane"), 0.0);
+  Kripke::Kernel::kConst(arch_v, data_store.getVariable<Field_IPlane>("i_plane"), 0.0);
+  Kripke::Kernel::kConst(arch_v, data_store.getVariable<Field_JPlane>("j_plane"), 0.0);
+  Kripke::Kernel::kConst(arch_v, data_store.getVariable<Field_KPlane>("k_plane"), 0.0);
 
   // Create a new sweep communicator object
   ParallelComm *comm = NULL;
@@ -62,13 +64,13 @@ void Kripke::SweepSolver (Kripke::Core::DataStore &data_store, std::vector<SdomI
 
       // Clear boundary conditions
       if(upwind(Dimension{0}) == -1){
-        Kripke::Kernel::kConst(data_store.getVariable<Field_IPlane>("i_plane"), sdom_id, 0.0);
+        Kripke::Kernel::kConst(arch_v, data_store.getVariable<Field_IPlane>("i_plane"), sdom_id, 0.0);
       }
       if(upwind(Dimension{1}) == -1){
-        Kripke::Kernel::kConst(data_store.getVariable<Field_JPlane>("j_plane"), sdom_id, 0.0);
+        Kripke::Kernel::kConst(arch_v, data_store.getVariable<Field_JPlane>("j_plane"), sdom_id, 0.0);
       }
       if(upwind(Dimension{2}) == -1){
-        Kripke::Kernel::kConst(data_store.getVariable<Field_KPlane>("k_plane"), sdom_id, 0.0);
+        Kripke::Kernel::kConst(arch_v, data_store.getVariable<Field_KPlane>("k_plane"), sdom_id, 0.0);
       }
 
       // Perform subdomain sweep

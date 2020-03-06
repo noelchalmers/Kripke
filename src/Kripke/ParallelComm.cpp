@@ -5,6 +5,8 @@
 // SPDX-License-Identifier: (BSD-3-Clause)
 //
 
+#include <Kripke/Kernel.h>
+
 #include <Kripke/ParallelComm.h>
 
 #include <Kripke/Core/Comm.h>
@@ -120,7 +122,7 @@ void ParallelComm::postRecvs(Kripke::Core::DataStore &data_store, SdomId sdom_id
 }
 
 void ParallelComm::postSends(Kripke::Core::DataStore &data_store, Kripke::SdomId sdom_id,
-                             double *src_buffers[3])
+                             Kripke::Core::FieldStorage<double>* src_buffers[3])
 {
   // post sends for downwind dependencies
   Kripke::Core::Comm comm;
@@ -154,11 +156,15 @@ void ParallelComm::postSends(Kripke::Core::DataStore &data_store, Kripke::SdomId
       }
 
       // copy the boundary condition data into the downwinds plane data
-      auto dst_plane = m_plane_data[*dim]->getView1d(sdom_id_downwind);
-      int num_elem = m_plane_data[*dim]->size(sdom_id_downwind);
-      for(int i = 0;i < num_elem;++ i){
-        dst_plane(i) = src_buffers[*dim][i];
-      }
+      // double* dst_plane = m_plane_data[*dim]->getData(sdom_id_downwind);
+      // double* src_plane = src_buffers[*dim]->getData(sdom_id);
+      // int num_elem = m_plane_data[*dim]->size(sdom_id_downwind);
+      // for(int i = 0;i < num_elem;++ i){
+      //   dst_plane[i] = src_plane[i];
+      // }
+
+      ArchV arch_v = data_store.getVariable<ArchLayout>("al").al_v.arch_v;
+      Kripke::Kernel::kCopy(arch_v, *src_buffers[*dim], sdom_id, *m_plane_data[*dim], sdom_id_downwind);
       continue;
     }
 
@@ -173,7 +179,7 @@ void ParallelComm::postSends(Kripke::Core::DataStore &data_store, Kripke::SdomId
     size_t plane_data_size = plane_data.size(sdom_id);
 
     // Post the send
-    MPI_Isend(src_buffers[*dim], plane_data_size, MPI_DOUBLE, downwind_rank,
+    MPI_Isend(src_buffers[*dim]->getData(), plane_data_size, MPI_DOUBLE, downwind_rank,
       *downwind_sdom, MPI_COMM_WORLD, &send_requests[send_requests.size()-1]);
 
 #else

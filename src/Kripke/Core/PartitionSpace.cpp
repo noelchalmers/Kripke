@@ -59,7 +59,7 @@ PartitionSpace::PartitionSpace(Kripke::Core::Comm &base_comm,
   // Project out the R color and rank
   int rank_r = m_proc_layout(0, 0, rank[2], rank[3], rank[4]);
   int color_r = m_proc_layout(rank[0], rank[1], 0, 0, 0);
-  
+
   // Split our R communicator
   m_comm_space[SPACE_R] = base_comm.split(color_r, rank_r);
 
@@ -74,7 +74,7 @@ PartitionSpace::PartitionSpace(Kripke::Core::Comm &base_comm,
 
 void PartitionSpace::setup_createSubdomains(
     size_t SP, size_t SQ, size_t Sx, size_t Sy, size_t Sz){
-  
+
   size_t num_sdom = SP * SQ * Sx * Sy * Sz;
 
   m_local_num_sdom[SPACE_PQR] = num_sdom;
@@ -147,12 +147,12 @@ void PartitionSpace::createSubdomainData(Kripke::Core::DataStore &data_store) co
   auto &field_global_to_local =
        data_store.newVariable<Field_GlobalSdomId2SdomId>(
            "GlobalSdomId2SdomId", set_global_sdomid, camp::list<GlobalSdomId>{});
-  Kripke::Kernel::kConst(field_global_to_local, SdomId{0});
+  Kripke::Kernel::kConst(ArchV_Sequential, field_global_to_local, SdomId{0});
 
   auto &field_global_to_rank =
        data_store.newVariable<Field_GlobalSdomId2Rank>(
            "GlobalSdomId2Rank", set_global_sdomid, camp::list<GlobalSdomId>{});
-  Kripke::Kernel::kConst(field_global_to_rank, 0);
+  Kripke::Kernel::kConst(ArchV_Sequential, field_global_to_rank, 0);
 
 
   size_t rank = m_comm_all.rank();

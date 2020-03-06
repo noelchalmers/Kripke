@@ -34,9 +34,10 @@ int Kripke::SteadyStateSolver (Kripke::Core::DataStore &data_store, size_t max_i
     printf("==================\n\n");
   }
 
+  ArchV arch_v = data_store.getVariable<ArchLayout>("al").al_v.arch_v;
 
   // Intialize unknowns
-  Kripke::Kernel::kConst(data_store.getVariable<Kripke::Field_Flux>("psi"), 0.0);
+  Kripke::Kernel::kConst(arch_v, data_store.getVariable<Kripke::Field_Flux>("psi"), 0.0);
 
 
   // Loop over iterations
@@ -50,13 +51,13 @@ int Kripke::SteadyStateSolver (Kripke::Core::DataStore &data_store, size_t max_i
 
 
     // Discrete to Moments transformation (phi = L*psi)
-    Kripke::Kernel::kConst(data_store.getVariable<Field_Moments>("phi"), 0.0);
+    Kripke::Kernel::kConst(arch_v, data_store.getVariable<Field_Moments>("phi"), 0.0);
     Kripke::Kernel::LTimes(data_store);
 
 
 
     // Compute Scattering Source Term (psi_out = S*phi)
-    Kripke::Kernel::kConst(data_store.getVariable<Kripke::Field_Moments>("phi_out"), 0.0);
+    Kripke::Kernel::kConst(arch_v, data_store.getVariable<Kripke::Field_Moments>("phi_out"), 0.0);
     Kripke::Kernel::scattering(data_store);
 
 
@@ -67,7 +68,7 @@ int Kripke::SteadyStateSolver (Kripke::Core::DataStore &data_store, size_t max_i
 
 
     // Moments to Discrete transformation (rhs = LPlus*psi_out)
-    Kripke::Kernel::kConst(data_store.getVariable<Kripke::Field_Flux>("rhs"), 0.0);
+    Kripke::Kernel::kConst(arch_v, data_store.getVariable<Kripke::Field_Flux>("rhs"), 0.0);
     Kripke::Kernel::LPlusTimes(data_store);
 
 

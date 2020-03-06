@@ -45,18 +45,20 @@ BlockJacobiComm::~BlockJacobiComm(){
 */
 void BlockJacobiComm::addSubdomain(Kripke::Core::DataStore &data_store, SdomId sdom_id){
 
+  ArchV arch_v = data_store.getVariable<ArchLayout>("al").al_v.arch_v;
+
   // Copy old flux data to send buffers
   auto &i_plane = m_data_store->getVariable<Field_IPlane>("i_plane");
   auto &old_i_plane = m_data_store->getVariable<Field_IPlane>("old_i_plane");
-  Kernel::kCopy(old_i_plane, i_plane);
+  Kernel::kCopy(arch_v, old_i_plane, i_plane);
 
   auto &j_plane = m_data_store->getVariable<Field_JPlane>("j_plane");
   auto &old_j_plane = m_data_store->getVariable<Field_JPlane>("old_j_plane");
-  Kernel::kCopy(old_j_plane, j_plane);
+  Kernel::kCopy(arch_v, old_j_plane, j_plane);
 
   auto &k_plane = m_data_store->getVariable<Field_KPlane>("k_plane");
   auto &old_k_plane = m_data_store->getVariable<Field_KPlane>("old_k_plane");
-  Kernel::kCopy(old_k_plane, k_plane);
+  Kernel::kCopy(arch_v, old_k_plane, k_plane);
 
   // post recieves
   postRecvs(data_store, sdom_id);
@@ -68,19 +70,19 @@ void BlockJacobiComm::addSubdomain(Kripke::Core::DataStore &data_store, SdomId s
 bool BlockJacobiComm::workRemaining(void){
   if(!posted_sends){
 
-    auto &old_i_plane = m_data_store->getVariable<Field_IPlane>("old_i_plane");
-    auto &old_j_plane = m_data_store->getVariable<Field_JPlane>("old_j_plane");
-    auto &old_k_plane = m_data_store->getVariable<Field_KPlane>("old_k_plane");
+    auto old_i_plane = &m_data_store->getVariable<Field_IPlane>("old_i_plane");
+    auto old_j_plane = &m_data_store->getVariable<Field_JPlane>("old_j_plane");
+    auto old_k_plane = &m_data_store->getVariable<Field_KPlane>("old_k_plane");
 
     // post sends for all queued subdomains
     for(size_t i = 0;i < queue_sdom_ids.size();++ i){
       SdomId sdom_id(queue_sdom_ids[i]);
 
       // Send new downwind info for sweep
-      double *buf[3] = {
-          old_i_plane.getData(sdom_id),
-          old_j_plane.getData(sdom_id),
-          old_k_plane.getData(sdom_id)
+      Kripke::Core::FieldStorage<double>*  buf[3] = {
+        old_i_plane,
+        old_j_plane,
+        old_k_plane
       };
 
       postSends(*m_data_store, sdom_id, buf);

@@ -36,7 +36,7 @@ void Kripke::Generate::generateData(Kripke::Core::DataStore &data_store,
   data_store.addVariable("Set/Flux", flux_set);
 
   ArchLayoutV al_v = data_store.getVariable<ArchLayout>("al").al_v;
-  
+
   // Create Solution and RHS fields
   createField<Field_Flux>(data_store, "psi", al_v, *flux_set);
   createField<Field_Flux>(data_store, "rhs", al_v, *flux_set);
@@ -80,8 +80,8 @@ void Kripke::Generate::generateData(Kripke::Core::DataStore &data_store,
   createField<Field_SigmaS>(data_store, "data/sigs", al_v, *sigs_set);
   auto &field_sigs = data_store.getVariable<Field_SigmaS>("data/sigs");
 
-  // Zero out entire matrix
-  Kripke::Kernel::kConst(field_sigs, 0.0);
+  // Zero out entire matrix (on host)
+  Kripke::Kernel::kConst(ArchV_Sequential, field_sigs, 0.0);
 
   // Assign basic diagonal data to matrix
   for(auto sdom_id : field_sigs.getWorkList()){

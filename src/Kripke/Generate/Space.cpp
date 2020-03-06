@@ -119,21 +119,21 @@ void Kripke::Generate::generateSpace(Kripke::Core::DataStore &data_store,
 
   auto &field_dx = createField<Field_ZoneI2Double>(data_store, "dx", al_v, set_zonei);
   double dx = (x_max-x_min) / set_zonei.globalSize();
-  Kripke::Kernel::kConst(field_dx, dx);
+  Kripke::Kernel::kConst(ArchV_Sequential, field_dx, dx);
 
   auto &field_dy = createField<Field_ZoneJ2Double>(data_store, "dy", al_v, set_zonej);
   double dy = (y_max-y_min) / set_zonej.globalSize();
-  Kripke::Kernel::kConst(field_dy, dy);
+  Kripke::Kernel::kConst(ArchV_Sequential, field_dy, dy);
 
   auto &field_dz = createField<Field_ZoneK2Double>(data_store, "dz", al_v, set_zonek);
   double dz = (z_max-z_min) / set_zonek.globalSize();
-  Kripke::Kernel::kConst(field_dz, dz);
+  Kripke::Kernel::kConst(ArchV_Sequential, field_dz, dz);
 
 
   // Create a zone volume field (this is simple considering our uniform grid)
   double zone_volume = dx*dy*dz;
   auto &field_volume = createField<Field_Zone2Double>(data_store, "volume", al_v, set_zone_linear);
-  Kripke::Kernel::kConst(field_volume, zone_volume);
+  Kripke::Kernel::kConst(ArchV_Sequential, field_volume, zone_volume);
 
 
   /*
@@ -335,7 +335,7 @@ void Kripke::Generate::generateSpace(Kripke::Core::DataStore &data_store,
       "Set/SigmaTZonal", pspace, SPACE_PR, set_group, set_zone);
   auto &field_sigt = createField<Field_SigmaTZonal>(
       data_store, "sigt_zonal", al_v, set_sigt_zonal);
-  Kripke::Kernel::kConst(field_sigt, 0.0);
+  Kripke::Kernel::kConst(ArchV_Sequential, field_sigt, 0.0);
 
   for(SdomId sdom_id : field_sigt.getWorkList()){
 

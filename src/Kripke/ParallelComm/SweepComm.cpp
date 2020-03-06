@@ -70,15 +70,15 @@ void SweepComm::markComplete(SdomId sdom_id){
   // Get subdomain pointer and remove from work queue
   dequeueSubdomain(sdom_id);
 
-  auto &i_plane = m_data_store->getVariable<Field_IPlane>("i_plane");
-  auto &j_plane = m_data_store->getVariable<Field_JPlane>("j_plane");
-  auto &k_plane = m_data_store->getVariable<Field_KPlane>("k_plane");
+  auto i_plane = &m_data_store->getVariable<Field_IPlane>("i_plane");
+  auto j_plane = &m_data_store->getVariable<Field_JPlane>("j_plane");
+  auto k_plane = &m_data_store->getVariable<Field_KPlane>("k_plane");
 
   // Send new downwind info for sweep
-  double *buf[3] = {
-    i_plane.getData(sdom_id),
-    j_plane.getData(sdom_id),
-    k_plane.getData(sdom_id)
+  Kripke::Core::FieldStorage<double>*  buf[3] = {
+    i_plane,
+    j_plane,
+    k_plane
   };
   postSends(*m_data_store, sdom_id, buf);
 }

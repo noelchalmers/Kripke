@@ -66,7 +66,7 @@ namespace Core {
 
                 switch(space){
                 case chai::CPU: printf("CPU "); break;
-#ifdef KRIPKE_USE_CUDA
+#if defined(KRIPKE_USE_CUDA) || defined(KRIPKE_USE_HIP)
                 case chai::GPU: printf("GPU  "); break;
 #endif
                 default: printf("UNK ");
