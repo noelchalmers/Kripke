@@ -44,7 +44,7 @@ namespace Kripke {
 
       RAJA::forall<ExecPolicy>(
         RAJA::RangeSegment(0, num_elem),
-        [=](RAJA::Index_type i){
+        KRIPKE_LAMBDA(RAJA::Index_type i){
           view1d(i) = value;
       });
     }
@@ -92,7 +92,7 @@ namespace Kripke {
 
       RAJA::forall<ExecPolicy>(
         RAJA::RangeSegment(0, num_elem),
-        [=](RAJA::Index_type i){
+        KRIPKE_LAMBDA(RAJA::Index_type i){
           view_src(i) = view_dst(i);
       });
     }
