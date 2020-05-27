@@ -71,25 +71,24 @@ macro(hip_execute_process status command)
     if(NOT "x${_command}" STREQUAL "xCOMMAND")
         message(FATAL_ERROR "Malformed call to hip_execute_process.  Missing COMMAND as second argument. (command = ${command})")
     endif()
+
+    # Build command string
+    set(hip_execute_process_string)
+    foreach(arg ${ARGN})
+        # Escape quotes if any
+        string(REPLACE "\"" "\\\"" arg ${arg})
+        #replace space-spearated strings with ;-separated list
+        string(REPLACE " " ";" arg ${arg})
+        list(APPEND hip_execute_process_string ${arg})
+    endforeach()
+
     if(verbose)
         execute_process(COMMAND "${CMAKE_COMMAND}" -E echo -- ${status})
-        # Build command string to print
-        set(hip_execute_process_string)
-        foreach(arg ${ARGN})
-            # Escape quotes if any
-            string(REPLACE "\"" "\\\"" arg ${arg})
-            # Surround args with spaces with quotes
-            if(arg MATCHES " ")
-                list(APPEND hip_execute_process_string "\"${arg}\"")
-            else()
-                list(APPEND hip_execute_process_string ${arg})
-            endif()
-        endforeach()
         # Echo the command
         execute_process(COMMAND ${CMAKE_COMMAND} -E echo ${hip_execute_process_string})
     endif()
     # Run the command
-    execute_process(COMMAND ${ARGN} RESULT_VARIABLE HIP_result)
+    execute_process(COMMAND ${hip_execute_process_string} RESULT_VARIABLE HIP_result)
 endmacro()
 
 # Delete the target file
