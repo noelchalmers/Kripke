@@ -1,0 +1,18 @@
+//////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2016-19, Lawrence Livermore National Security, LLC and CHAI
+// project contributors. See the COPYRIGHT file for details.
+//
+// SPDX-License-Identifier: BSD-3-Clause
+//////////////////////////////////////////////////////////////////////////////
+#ifndef CHAI_config_HPP
+#define CHAI_config_HPP
+
+#cmakedefine CHAI_ENABLE_PICK
+#cmakedefine CHAI_ENABLE_CUDA 
+#cmakedefine CHAI_ENABLE_HIP 
+#cmakedefine CHAI_ENABLE_IMPLICIT_CONVERSIONS
+#cmakedefine CHAI_DISABLE_RM
+#cmakedefine CHAI_ENABLE_UM
+#cmakedefine CHAI_ENABLE_RAJA_PLUGIN
+
+#endif // CHAI_config_HPP

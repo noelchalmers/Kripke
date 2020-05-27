@@ -1,6 +1,0 @@
-[submodule "blt"]
-	path = blt
-	url = https://github.com/LLNL/blt.git
-[submodule "tpl/chai"]
-	path = tpl/chai
-	url = https://github.com/noelchalmers/CHAI.git
