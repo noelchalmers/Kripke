@@ -17,7 +17,7 @@ message(STATUS "HIP platform:     ${HIP_PLATFORM}")
 #message(STATUS "HIP Include Path: ${HIP_INCLUDE_DIRS}")
 #message(STATUS "HIP Libraries:    ${HIP_LIBRARIES}")
 
-if(${HIP_PLATFORM} STREQUAL "hcc")
+if(${HIP_PLATFORM} STREQUAL "hcc" OR ${HIP_PLATFORM} STREQUAL "amd")
 	set(HIP_RUNTIME_DEFINE "__HIP_PLATFORM_HCC__")
 elseif(${HIP_PLATFORM} STREQUAL "nvcc")
 	set(HIP_RUNTIME_DEFINE "__HIP_PLATFORM_NVCC__")

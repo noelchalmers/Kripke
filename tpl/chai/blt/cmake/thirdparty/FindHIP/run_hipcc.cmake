@@ -47,7 +47,7 @@ set(host_flag "@host_flag@") # bool
 execute_process(COMMAND ${HIP_HIPCONFIG_EXECUTABLE} --platform OUTPUT_VARIABLE HIP_PLATFORM OUTPUT_STRIP_TRAILING_WHITESPACE)
 if(NOT host_flag)
     set(__CC ${HIP_HIPCC_EXECUTABLE})
-    if(HIP_PLATFORM STREQUAL "hcc")
+    if(HIP_PLATFORM STREQUAL "hcc" OR ${HIP_PLATFORM} STREQUAL "amd")
         if(NOT "x${HCC_HOME}" STREQUAL "x")
             set(ENV{HCC_HOME} ${HCC_HOME})
         endif()
