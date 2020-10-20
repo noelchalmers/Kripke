@@ -128,7 +128,7 @@ if(ENABLE_HIP)
 
   set(KRIPKE_ARCH "HIP")
 
-  list(APPEND HIP_HIPCC_FLAGS "-std=c++14 -Wno-inconsistent-missing-override -Wno-invalid-noreturn -ffast-math")
+  list(APPEND HIP_HIPCC_FLAGS "-std=c++14 -Wno-inconsistent-missing-override -Wno-invalid-noreturn -ffast-math --gpu-max-threads-per-block=256")
 
   # Make sure that hipcc turns on the OpenMP flag
   if(ENABLE_OPENMP)
